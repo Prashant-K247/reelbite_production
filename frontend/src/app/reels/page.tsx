@@ -1,12 +1,13 @@
 // src/app/reels/page.tsx
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react"; // Added Suspense here
 import api from "@/lib/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ReelCard from "@/components/ReelCard";
 
-export default function ReelsFeed() {
+// 1. Move all the logic into a separate inner component
+function ReelsFeedContent() {
   const [foodItems, setFoodItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -70,12 +71,24 @@ export default function ReelsFeed() {
         </div>
       ) : (
         foodItems.map((food: any) => (
-          // Each reel wrapper takes exactly 1 screen height and centers its content
           <div key={food._id} id={`reel-${food._id}`} className="h-screen w-full flex items-center justify-center snap-start shrink-0">
             <ReelCard food={food} />
           </div>
         ))
       )}
     </div>
+  );
+}
+
+// 2. Export the default component wrapped in Suspense
+export default function ReelsFeed() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen w-full bg-black flex items-center justify-center text-white">
+        Loading...
+      </div>
+    }>
+      <ReelsFeedContent />
+    </Suspense>
   );
 }
