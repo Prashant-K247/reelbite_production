@@ -7,6 +7,7 @@ import cors from "cors"
 import { globalLimiter } from "./middleware/rateLimiter.middleware.js"
 
 const app = express()
+app.set("trust proxy", 1);
 const frontend = process.env.FRONTEND_URL || "http://localhost:3001"
 app.use(cors({origin:frontend, credentials:true}));
 app.use(globalLimiter);
